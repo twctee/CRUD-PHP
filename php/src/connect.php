@@ -1,5 +1,6 @@
-<?php 
-class DatabaseConnection {
+<?php
+class DatabaseConnection
+{
     private $host = 'db';
     private $dbname = 'test';
     private $username = 't';
@@ -7,7 +8,8 @@ class DatabaseConnection {
 
     protected $pdo;
 
-    public function __construct() {
+    public function __construct()
+    {
         $dsn = "mysql:host=$this->host;dbname=$this->dbname;charset=utf8mb4";
 
         $options = [
@@ -23,8 +25,36 @@ class DatabaseConnection {
         }
     }
 
-    public function getPdo() {
-        $this->pdo='test'; 
+    public function getPdo()
+    {
         return $this->pdo;
+    }
+
+    public function query($sql, $param)
+    {
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            return  $stmt->execute($param);
+        } catch (PDOException $e) {
+            // Handle any errors that occur
+            return $e->getMessage();
+        }
+    }
+
+    public function fetch($sql)
+    {
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $data = array();
+            foreach ($results as $result) {
+                $data[] = $result;
+            }
+            return $data;
+        } catch (PDOException $e) {
+            // Handle any errors that occur
+            return $e->getMessage();
+        }
     }
 }
